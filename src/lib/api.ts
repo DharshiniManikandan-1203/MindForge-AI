@@ -5,7 +5,14 @@ import {
 } from '../types/result';
 import { validateStudySet } from './validateResult';
 
-const API_BASE = '/api';
+const getApiBase = () => {
+  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL;
+  if (!envUrl) return '/api';
+  const clean = envUrl.replace(/\/$/, '');
+  return clean.endsWith('/api') ? clean : `${clean}/api`;
+};
+
+const API_BASE = getApiBase();
 const DEFAULT_TIMEOUT_MS = 35000;
 
 export class ApiRequestError extends Error {

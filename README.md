@@ -51,12 +51,8 @@ cd flam-frontend-assignment
 # 2. Install dependencies
 npm install
 
-# 3. (Optional) Configure Gemini API Key
-# Copy .env.example to .env and insert your free Google Gemini API key:
-cp .env.example .env
-# Edit .env: GEMINI_API_KEY=your_key_here
 
-# 4. Start both Backend Server and Vite Dev Server concurrently
+# 3. Start both Backend Server and Vite Dev Server concurrently
 npm start
 # or: npm run dev
 ```
@@ -64,6 +60,24 @@ npm start
 The application will be accessible at:
 - **Frontend**: [http://localhost:5173](http://localhost:5173)
 - **Backend Proxy**: [http://localhost:3001](http://localhost:3001)
+
+### 🌐 Deployment Guide (Render + Vercel)
+
+#### 1. Deploy Backend to Render (Web Service)
+1. Go to [Render Dashboard](https://dashboard.render.com/) -> **New** -> **Web Service**.
+2. Connect this GitHub repository.
+3. Configure the service:
+   - **Build Command**: `npm install`
+   - **Start Command**: `npm run start:server`
+   - **Environment Variable**: `GEMINI_API_KEY` = your Gemini key.
+4. Once deployed, copy your Render backend URL (e.g. `https://your-backend.onrender.com`).
+
+#### 2. Deploy Frontend to Vercel
+1. Go to [Vercel Dashboard](https://vercel.com/) -> **Add New** -> **Project**.
+2. Import this GitHub repository.
+3. Set Environment Variable in Vercel settings:
+   - `VITE_API_BASE_URL` = `https://your-backend.onrender.com`
+4. Click **Deploy**. Vercel will build and host the interactive frontend!
 
 ---
 
@@ -94,7 +108,7 @@ flam-frontend-assignment/
 │   ├── App.tsx               # Root component: state orchestration and stale response guard
 │   ├── main.tsx              # React DOM entry point
 │   └── index.css             # Tailwind styling and 3D card perspective classes
-├── .env.example              # Environment variables template
+├── .env                      # Environment variables 
 ├── package.json              # Project scripts and dependencies
 ├── tailwind.config.js        # Theme tokens, fonts, and animation keyframes
 └── tsconfig.json             # TypeScript configuration
