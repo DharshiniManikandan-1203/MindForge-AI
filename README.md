@@ -24,37 +24,88 @@
 
 ---
 
-## 📌 Executive Overview
+## 📌 Project Overview
 
-**MindForge AI** is an intelligent, structured educational study tool designed to transform unstructured notes, articles, and curriculum topics into active-recall learning suites. 
+**MindForge AI** is an intelligent, structured educational study tool designed to turn unstructured notes, textbook summaries, and complex topics into active-recall study sets.
 
-Rather than standard conversational chat interfaces, MindForge AI focuses on **deterministic structured JSON extraction** to drive interactive UI components:
+Rather than building a standard conversational chat interface, this project focuses on **deterministic structured extraction** that directly drives rich, interactive UI components:
 
-1. **3D Active-Recall Flashcard Deck**: Interactive flip cards with session mastery tracking, keyboard shortcuts, shuffling, and status filters.
-2. **Self-Grading Quiz Engine with Re-Test Loop**: 4-option multiple-choice quizzes featuring randomized answer distribution, instant answer rationales, score streaks, letter grading, and an exclusive **"Re-Test Wrong Answers"** mode.
-3. **Key Concept Taxonomy**: High-yield terminology cards categorized by importance level with instant clipboard integration.
-4. **Follow-Up Refinement Engine**: Live conversational refinement loop allowing students to dynamically expand or adjust generated study sets without losing context.
-5. **Session Management & Export**: Local persistence with full study set export in **JSON** and formatted **Markdown (.md)** study guides.
-
----
-
-## 🤖 Google Gemini AI Integration
-
-MindForge AI uses Google's latest **Gemini Flash models** (`gemini-3.8-flash`, `gemini-3.6-flash`, `gemini-3.7-flash`, `gemini-3.5-flash`) to generate strictly typed, educational active-recall study sets.
-
-### Obtaining a Free Gemini API Key:
-1. Visit [Google AI Studio](https://aistudio.google.com/).
-2. Sign in with your Google account.
-3. Click **"Create API Key"** and copy the generated key.
-4. Add it to your `.env` file on the backend as `GEMINI_API_KEY`.
-
-### API Key Security:
-- The Gemini API Key is stored and executed exclusively on the **Express Backend Proxy** (`server/generate.ts`).
-- It is **never bundled into or exposed on the client frontend**, ensuring total credential isolation.
+1. **3D Active-Recall Flashcards**: Realistic 3D card flips, session recall tracking (*Know It* vs *Still Learning*), card bookmarking, deck shuffling, and keyboard shortcuts.
+2. **Interactive Quiz Engine & Re-Test Loop**: Multiple-choice quizzes with randomized option distribution, immediate feedback with rationale explanations, streak counters, letter grades (`A+` to `D`), celebratory confetti, and a targeted **"Re-Test Wrong Answers"** mode.
+3. **Key Concepts Taxonomy**: High-yield terminology breakdown tagged by importance with 1-click clipboard copying.
+4. **Iterative Refinement Loop**: Follow-up prompt engine to dynamically modify, expand, or simplify study sets without starting over.
+5. **Session Persistence & Export**: LocalStorage session history with export to structured **JSON** and formatted **Markdown (.md)** study guides.
 
 ---
 
-## 🏛️ Architectural Highlights
+## 🚀 Setup & Installation
+
+### Prerequisites
+- **Node.js**: v18.x or higher
+- **npm**: v9.x or higher
+- **Gemini API Key**: Obtain a free key from [Google AI Studio](https://aistudio.google.com/)
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/DharshiniManikandan-1203/flam-frontend-assignment.git
+cd flam-frontend-assignment
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env` file in the root directory:
+
+```env
+PORT=3001
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### 4. Run Locally
+
+```bash
+npm start
+```
+
+---
+
+## 📖 How to Use MindForge AI
+
+1. **Generate a Study Set**:
+   - Paste your study notes or choose a preset topic (e.g., *Photosynthesis*, *Quantum Computing*, *System Design*).
+   - Adjust the difficulty slider (*Beginner*, *Intermediate*, *Advanced*) and focus preferences.
+   - Click **"Generate Study Deck"**.
+
+2. **Master Active Recall with 3D Flashcards**:
+   - Click a card or press `Space` to flip between question and answer.
+   - Use `1` to mark a card as *Still Learning* or `2` for *Know It*.
+   - Filter cards by mastery status, star priority cards with `S`, or hit **Shuffle** to randomize the deck.
+
+3. **Take Quizzes & Re-Test**:
+   - Select an answer to get immediate visual feedback and detailed conceptual rationale.
+   - Watch your streak counter and finish the quiz to view your score summary and letter grade.
+   - Click **"Re-Test Wrong Answers"** to isolate and practice only the questions you missed.
+
+4. **Review Key Concepts**:
+   - Browse high-yield definitions and practical examples categorized by importance (*Foundational*, *Medium*, *High*).
+   - Click the copy button to grab formatted notes for your personal docs.
+
+5. **Refine Deck with Follow-up Prompts**:
+   - Use the bottom refinement bar to request updates (e.g., *"Add 3 advanced cards on edge cases"* or *"Simplify the flashcard explanations"*).
+
+6. **Save & Export**:
+   - Access saved sessions via the top drawer.
+   - Export any study deck as clean **JSON** or formatted **Markdown**.
+
+---
+
+## 🏛️ Architecture & Defensive Engineering
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -62,16 +113,16 @@ MindForge AI uses Google's latest **Gemini Flash models** (`gemini-3.8-flash`, `
 │  - Tabbed Dashboard (Flashcards / Quiz / Concepts)          │
 │  - Defensive Runtime Validator (validateResult.ts)          │
 │  - Stale Response Guard (useRef Sequence ID)                │
-│  - AbortController Timeout Management                       │
+│  - AbortController Timeout Management (35s)                 │
 └──────────────────────────────┬──────────────────────────────┘
                                │ HTTPS / JSON
                                ▼
 ┌─────────────────────────────────────────────────────────────┐
 │               Backend Proxy (Express / Node.js)             │
 │  - Secure API Key Isolation (Never exposed to client)       │
-│  - Dynamic Model Cascade (Gemini 3.8 / 3.6 / 3.7 Flash)     │
+│  - Model Cascade (Gemini 3.8 / 3.6 / 3.7 / 3.5 Flash)       │
 │  - JSON Schema Enforcement & Output Sanitization            │
-│  - Automated 429 Rate-Limit Interception                    │
+│  - Rate-Limit Interception (HTTP 429)                       │
 └──────────────────────────────┬──────────────────────────────┘
                                │ Google Generative AI SDK
                                ▼
@@ -81,134 +132,23 @@ MindForge AI uses Google's latest **Gemini Flash models** (`gemini-3.8-flash`, `
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 1. Zero API Key Exposure
-All LLM orchestration happens on the dedicated Express backend proxy (`server/generate.ts`). Client bundles never contain sensitive API keys or credentials.
-
-### 2. Strict Defensive Validation Boundary
-LLM outputs are sanitized and validated through a runtime schema validator before reaching React state. Missing attributes, malformed questions, or invalid option lengths are safely normalized without UI crashes.
-
-### 3. Asynchronous Stale Response Guard
-An incremental sequence identifier (`useRef(0)`) tags each request. If a user triggers a new generation while a previous request is in-flight, slower stale responses are safely discarded upon resolution.
-
-### 4. Automated Answer Randomization
-Quiz questions undergo algorithmic option shuffling (Fisher-Yates) during ingestion, ensuring correct answers are evenly distributed across all choices (`A`, `B`, `C`, `D`).
+### Key Technical Decisions:
+- **Backend API Proxy (`server/generate.ts`)**: Keeps the Google Gemini API key strictly on the server, avoiding any exposure in client JavaScript bundles.
+- **Defensive Validation Boundary (`src/lib/validateResult.ts`)**: Intercepts and validates the raw JSON response before feeding it to React components. Missing fields, broken IDs, or malformed arrays are normalized safely.
+- **Fisher-Yates Option Shuffling**: Multiple-choice options are dynamically scrambled on ingestion so correct answers are naturally distributed across `A`, `B`, `C`, and `D`.
+- **Stale Response Guard**: Uses an incrementing sequence ID (`useRef(0)`) to ensure that if a user submits a second query before the first finishes, slow out-of-order responses are safely discarded.
 
 ---
 
-## 🚀 Quick Start & Local Development
+## 🛡️ Error Handling & Failure Resilience
 
-### Prerequisites
-- **Node.js**: v18.x or higher
-- **npm**: v9.x or higher
-- **Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/DharshiniManikandan-1203/flam-frontend-assignment.git
-cd flam-frontend-assignment
-npm install
-```
-
-### 2. Configure Environment
-
-Create a `.env` file in the project root:
-
-```env
-PORT=3001
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-### 3. Launch Application
-
-```bash
-npm start
-```
-
----
-
-## 📂 Project Structure
-
-```
-flam-frontend-assignment/
-├── server/
-│   └── generate.ts            # Express proxy: holds Gemini API key, handles /api/generate & /api/refine
-├── src/
-│   ├── components/
-│   │   ├── Header.tsx          # Brand header, live Gemini status indicator, and saved session access
-│   │   ├── PromptInput.tsx     # Topic input, preset curriculum topics, and difficulty controls
-│   │   ├── ResultView.tsx      # Core tabbed interface for Flashcards, Quiz, Concepts, and Meta
-│   │   ├── FlashcardDeck.tsx   # 3D CSS flip cards, mastery rating (Know It / Still Learning), shortcuts
-│   │   ├── QuizView.tsx        # Interactive quiz, rationale expanders, confetti, and Re-Test loop
-│   │   ├── KeyConceptsView.tsx # High-yield concept cards with importance badges and clipboard copy
-│   │   ├── RefinementInput.tsx # Follow-up prompt loop for iterative study set updates
-│   │   ├── SessionHistory.tsx  # LocalStorage persistence with JSON and Markdown export
-│   │   ├── ShortcutsModal.tsx  # Keyboard shortcuts modal dialog (? key)
-│   │   ├── LoadingState.tsx    # Multi-stage animated pipeline with cancel action
-│   │   └── ErrorState.tsx      # Granular error state with debug inspector and retry action
-│   ├── lib/
-│   │   ├── api.ts              # API client with AbortController and timeout guards
-│   │   └── validateResult.ts   # Defensive validation, sanitization, and quiz option randomization
-│   ├── types/
-│   │   └── result.ts           # TypeScript type definitions for StudySet, Cards, Quiz, and Errors
-│   ├── App.tsx                 # Root component: state management and stale response guard
-│   ├── main.tsx                # React application entry point
-│   └── index.css               # Tailwind directives and custom 3D card CSS transformations
-├── .env.example                # Example environment configuration template
-├── package.json                # Project dependencies and operational scripts
-├── tailwind.config.js          # Tailwind design tokens, typography, and animation configurations
-├── tsconfig.json               # TypeScript configuration
-└── vercel.json                 # Vercel deployment routing configuration
-```
-
----
-
-## 📋 Data Contract & Schema Specification
-
-The backend proxy enforces a strict JSON contract with Google Gemini AI:
-
-```typescript
-export interface StudySet {
-  topic: string;
-  summary: string;
-  difficulty: 'beginner' | 'intermediate' | 'advanced';
-  estimatedMinutes: number;
-  keyConcepts: Array<{
-    id: string;
-    term: string;
-    definition: string;
-    importance: 'high' | 'medium' | 'foundational';
-    example?: string;
-  }>;
-  cards: Array<{
-    id: string;
-    question: string;
-    answer: string;
-    hint?: string;
-    category?: string;
-  }>;
-  quiz: Array<{
-    id: string;
-    question: string;
-    options: string[]; // exactly 4 choices
-    correctIndex: number; // 0 to 3 (randomized)
-    explanation: string;
-    conceptTag?: string;
-  }>;
-}
-```
-
----
-
-## 🛡️ Error Handling & Defensive Resilience
-
-| Failure Mode | Defensive Strategy | UI Behavior |
+| Scenario | Strategy & Handling | User Experience |
 | :--- | :--- | :--- |
-| **Malformed JSON** | Backend cleaning layer + client `try/catch` guard | Renders `MALFORMED_JSON` error state with raw payload inspector and 1-click retry. |
-| **Schema Mismatch** | `validateStudySet()` defensive type and bounds checking | Automatically repairs minor anomalies; halts corrupted schemas with clean diagnostic messaging. |
-| **Upstream Timeout** | 35-second client timeout enforced via `AbortController` | Displays `TIMEOUT` notification with manual abort and retry controls. |
-| **Quota / Rate Limits (429)** | Automated rate-limit interception across fallback models | Displays `RATE_LIMITED` badge with retry cooldown recommendation. |
-| **Stale Async Race Condition** | `useRef(0)` incrementing sequence IDs | Safely drops slower out-of-order responses when subsequent generations are requested. |
+| **Malformed JSON** | Backend cleaning layer + frontend `try/catch` wrapper | Clear `MALFORMED_JSON` error banner with raw payload inspector and 1-click retry. |
+| **Schema Mismatch** | `validateStudySet()` defensive bounds and shape verification | Repairs minor anomalies or halts cleanly with informative diagnostic feedback. |
+| **Request Timeout** | 35-second client timeout enforced via `AbortController` | Displays `TIMEOUT` notification with manual abort and retry controls. |
+| **Rate Limits (HTTP 429)** | Automated rate-limit detection across fallback models | Shows `RATE_LIMITED` badge with retry cooldown suggestion. |
+| **Stale Async Race Condition** | `useRef(0)` incrementing sequence counter | Safely drops slower out-of-order responses when subsequent generations are requested. |
 
 ---
 
@@ -218,10 +158,53 @@ export interface StudySet {
 | :--- | :--- | :--- |
 | `Space` / `Enter` | Flip active flashcard | Flashcards Tab |
 | `←` / `→` or `H` / `L` | Previous / Next flashcard | Flashcards Tab |
-| `1` | Mark as "Still Learning" | Flashcards Tab |
-| `2` | Mark as "Know It" | Flashcards Tab |
+| `1` | Mark card as "Still Learning" | Flashcards Tab |
+| `2` | Mark card as "Know It" | Flashcards Tab |
 | `S` | Toggle star / bookmark on active card | Flashcards Tab |
 | `?` | Open Keyboard Shortcuts Modal | Global |
+
+---
+
+## 🤖 AI-Usage Note
+
+In accordance with the assignment guidelines, here is a transparent overview of how AI tools were utilized during development:
+
+- **What AI was used for**:
+  - Drafting initial system prompt instructions and refining the JSON schema format.
+  - Generating sample test topics during development to test edge cases.
+  - Quick syntax lookups for Tailwind CSS animation configurations and TypeScript utility types.
+
+- **What was built from scratch**:
+  - Entire React application architecture, custom hooks, and state management workflows.
+  - Custom 3D perspective flip card animations and CSS transform hierarchy.
+  - Defensive runtime validation engine (`validateResult.ts`) and Fisher-Yates quiz option randomizer.
+  - Asynchronous stale-response race condition guard (`useRef(0)` sequence manager).
+  - Multi-stage loading progress pipeline, error boundary states, and the targeted **Re-Test Wrong Answers** quiz loop.
+  - Express backend proxy with multi-model fallback cascade.
+
+---
+
+## 🔮 Known Limitations & Roadmap
+
+1. **Spaced Repetition Algorithm (SM-2)**: Current recall mastery tracks session-based status (*Know It* vs *Still Learning*). Integrating a full SuperMemo (SM-2) algorithm with calculated review intervals (1, 3, 7 days) would be a great future enhancement.
+2. **Multi-Modal Diagrams**: Expanding flashcards to render visual concept diagrams or Mermaid charts directly from notes.
+3. **Audio Pronunciation**: Integrating the Web Speech API to provide auditory flashcard prompts for language learners.
+4. **Anki Deck Export**: Adding `.apkg` file format export alongside existing JSON and Markdown exports.
+
+---
+
+## ⏱️ Time Spent Breakdown
+
+| Phase | Tasks & Activities | Time Spent |
+| :--- | :--- | :--- |
+| **Phase 1: Planning & Schema Design** | Requirements breakdown, structured JSON schema design, and domain modeling | ~45 mins |
+| **Phase 2: Scaffolding & Backend Proxy** | Vite + React 18 setup, Tailwind theme tokens, Express proxy with Gemini integration | ~1 hr 15 mins |
+| **Phase 3: Defensive Validation & Core State** | Schema validator (`validateResult.ts`), API client, timeout & stale-response guards | ~1 hr 30 mins |
+| **Phase 4: 3D Flashcards & Recall Tracking** | CSS 3D flip deck, mastery state management, keyboard shortcuts, shuffle & filters | ~1 hr 45 mins |
+| **Phase 5: Quiz Engine & Re-Test Loop** | Self-grading quiz, option randomizer, streak counter, score card, and **Re-Test loop** | ~1 hr 15 mins |
+| **Phase 6: Polish, Persistence & Refinement** | Refinement prompt bar, LocalStorage session history, Markdown/JSON export, error states | ~1 hr 00 mins |
+| **Phase 7: Testing, Deployment & Docs** | Render backend & Vercel frontend deployment, responsive mobile verification, README | ~45 mins |
+| **Total** | **End-to-End Implementation & Verification** | **~8 hours 15 mins** |
 
 ---
 
