@@ -131,14 +131,14 @@ app.post('/api/generate', async (req: Request, res: Response) => {
   }
 
   const modelsToTry = [
+    'gemini-3.8-flash',
     'gemini-3.6-flash',
     'gemini-3.7-flash',
-    'gemini-2.5-flash',
-    'gemini-flash-latest',
-    'gemini-1.5-flash'
+    'gemini-3.5-flash'
   ];
 
   let lastError: any = null;
+  let isRateLimited = false;
 
   for (const modelName of modelsToTry) {
     try {
@@ -178,15 +178,31 @@ Generate the structured JSON study set now.`;
 
       return res.json({
         success: true,
-        data: parsed
+        data: parsed,
+        modelUsed: modelName
       });
     } catch (err: any) {
       lastError = err;
-      console.warn(`[Gemini] Attempt with model '${modelName}' failed:`, err.message || err);
+      const errMsg = err.message || '';
+      if (errMsg.includes('429') || errMsg.includes('Quota exceeded') || errMsg.includes('Too Many Requests')) {
+        isRateLimited = true;
+      }
+      console.warn(`[Gemini] Attempt with model '${modelName}' failed:`, errMsg);
+      // Wait 1 second before trying the next model to avoid rapid burst
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 
   console.error('[Gemini] All model attempts failed:', lastError);
+
+  if (isRateLimited) {
+    return res.status(429).json({
+      error: 'RATE_LIMITED',
+      message: 'Gemini API free tier rate limit reached. Please wait a few seconds and try again.',
+      details: lastError?.message || lastError?.toString()
+    });
+  }
+
   return res.status(500).json({
     error: 'SERVER_ERROR',
     message: lastError?.message || 'Failed to generate study materials via Gemini AI.',
@@ -214,14 +230,14 @@ app.post('/api/refine', async (req: Request, res: Response) => {
   }
 
   const modelsToTry = [
+    'gemini-3.8-flash',
     'gemini-3.6-flash',
     'gemini-3.7-flash',
-    'gemini-2.5-flash',
-    'gemini-flash-latest',
-    'gemini-1.5-flash'
+    'gemini-3.5-flash'
   ];
 
   let lastError: any = null;
+  let isRateLimited = false;
 
   for (const modelName of modelsToTry) {
     try {
@@ -254,15 +270,30 @@ Output the updated study set in the EXACT same JSON schema. Maintain existing it
 
       return res.json({
         success: true,
-        data: parsed
+        data: parsed,
+        modelUsed: modelName
       });
     } catch (err: any) {
       lastError = err;
-      console.warn(`[Gemini Refine] Model '${modelName}' failed:`, err.message || err);
+      const errMsg = err.message || '';
+      if (errMsg.includes('429') || errMsg.includes('Quota exceeded') || errMsg.includes('Too Many Requests')) {
+        isRateLimited = true;
+      }
+      console.warn(`[Gemini Refine] Model '${modelName}' failed:`, errMsg);
+      await new Promise((r) => setTimeout(r, 1000));
     }
   }
 
   console.error('[Gemini Refine] All model attempts failed:', lastError);
+
+  if (isRateLimited) {
+    return res.status(429).json({
+      error: 'RATE_LIMITED',
+      message: 'Gemini API free tier rate limit reached. Please wait a few seconds and try again.',
+      details: lastError?.message || lastError?.toString()
+    });
+  }
+
   return res.status(500).json({
     error: 'SERVER_ERROR',
     message: lastError?.message || 'Failed to refine study set via Gemini AI.'

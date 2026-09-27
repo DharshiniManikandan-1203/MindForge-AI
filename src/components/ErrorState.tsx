@@ -77,6 +77,14 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           suggestion:
             'Add GEMINI_API_KEY to your .env file or load a pre-built offline study set.',
         };
+      case 'SERVER_ERROR':
+        return {
+          icon: <AlertTriangle className="w-6 h-6 text-rose-400" />,
+          title: 'AI Generation Error',
+          badgeColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
+          suggestion:
+            'The AI generation engine encountered a temporary issue. Click Retry Generation to request generation again.',
+        };
       case 'NETWORK_ERROR':
       default:
         return {
@@ -84,7 +92,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
           title: 'Backend Proxy Unreachable',
           badgeColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
           suggestion:
-            'Could not establish connection with Express backend at http://localhost:3001. Ensure the server is running.',
+            'Could not establish connection with Express backend. Ensure the server is running and accessible.',
         };
     }
   };
