@@ -5,7 +5,7 @@
 > **GitHub**: [@DharshiniManikandan-1203](https://github.com/DharshiniManikandan-1203)  
 > **Repository**: [flam-frontend-assignment](https://github.com/DharshiniManikandan-1203/flam-frontend-assignment)
 
-[![Live Frontend](https://img.shields.io/badge/Frontend-Vercel_Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://flam-frontend-assignment.vercel.app)
+[![Live Frontend](https://img.shields.io/badge/Frontend-Vercel_Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://flam-frontend-assignment-two.vercel.app)
 [![Live Backend](https://img.shields.io/badge/Backend_API-Render_Service-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://flam-frontend-assignment-yfwt.onrender.com)
 [![React](https://img.shields.io/badge/React-18.3-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -17,7 +17,7 @@
 
 | Resource | Service / Platform | Direct URL | Status |
 | :--- | :--- | :--- | :--- |
-| **Frontend Application** | Vercel | [https://flam-frontend-assignment.vercel.app](https://flam-frontend-assignment.vercel.app) | 🟢 Live / Deployed |
+| **Frontend Application** | Vercel | [https://flam-frontend-assignment-two.vercel.app](https://flam-frontend-assignment-two.vercel.app) | 🟢 Live / Deployed |
 | **Backend API Proxy** | Render | [https://flam-frontend-assignment-yfwt.onrender.com](https://flam-frontend-assignment-yfwt.onrender.com) | 🟢 Online / Active |
 | **Health Check Endpoint** | Render Web Service | [https://flam-frontend-assignment-yfwt.onrender.com/api/health](https://flam-frontend-assignment-yfwt.onrender.com/api/health) | 🟢 200 OK |
 | **Source Repository** | GitHub | [https://github.com/DharshiniManikandan-1203/flam-frontend-assignment](https://github.com/DharshiniManikandan-1203/flam-frontend-assignment) | 🟢 Public |
@@ -35,6 +35,22 @@ Rather than standard conversational chat interfaces, MindForge AI focuses on **d
 3. **Key Concept Taxonomy**: High-yield terminology cards categorized by importance level with instant clipboard integration.
 4. **Follow-Up Refinement Engine**: Live conversational refinement loop allowing students to dynamically expand or adjust generated study sets without losing context.
 5. **Session Management & Export**: Local persistence with full study set export in **JSON** and formatted **Markdown (.md)** study guides.
+
+---
+
+## 🤖 Google Gemini AI Integration
+
+MindForge AI uses Google's latest **Gemini Flash models** (`gemini-3.8-flash`, `gemini-3.6-flash`, `gemini-3.7-flash`, `gemini-3.5-flash`) to generate strictly typed, educational active-recall study sets.
+
+### Obtaining a Free Gemini API Key:
+1. Visit [Google AI Studio](https://aistudio.google.com/).
+2. Sign in with your Google account.
+3. Click **"Create API Key"** and copy the generated key.
+4. Add it to your `.env` file on the backend as `GEMINI_API_KEY`.
+
+### API Key Security:
+- The Gemini API Key is stored and executed exclusively on the **Express Backend Proxy** (`server/generate.ts`).
+- It is **never bundled into or exposed on the client frontend**, ensuring total credential isolation.
 
 ---
 
@@ -103,15 +119,11 @@ PORT=3001
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-### 3. Launch Development Server
+### 3. Launch Application
 
 ```bash
 npm start
 ```
-
-This concurrently starts:
-- **Frontend (Vite)**: [http://localhost:5173](http://localhost:5173)
-- **Backend Proxy (Express)**: [http://localhost:3001](http://localhost:3001)
 
 ---
 
@@ -226,13 +238,12 @@ export interface StudySet {
 - **Root Directory**: `./`
 - **Build Command**: `npm run build`
 - **Output Directory**: `dist`
-- **Environment Variables**: `VITE_API_BASE_URL` set to Render backend service URL
+- **Environment Variables**: `VITE_API_BASE_URL` set to Render backend service URL (`https://flam-frontend-assignment-yfwt.onrender.com`)
 
 ---
 
 ## 👤 Author & Acknowledgements
 
 - **Author**: Dharshini Manikandan
-- **Role**: Frontend Engineering Intern Candidate
 - **Assignment**: Flam Frontend Internship Assignment — *AI-Powered Interactive Tool*
 - **License**: MIT License
