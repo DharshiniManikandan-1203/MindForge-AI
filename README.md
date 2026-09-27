@@ -1,124 +1,159 @@
 # MindForge AI — Interactive Study & Active-Recall Assistant
 
 > **Flam Frontend Internship Assignment**  
-> An AI-powered interactive study tool that transforms unstructured notes and raw topics into structured, interactive active-recall flashcards, self-grading quizzes, and key concepts.
+> **Author**: Dharshini Manikandan  
+> **GitHub**: [@DharshiniManikandan-1203](https://github.com/DharshiniManikandan-1203)  
+> **Repository**: [flam-frontend-assignment](https://github.com/DharshiniManikandan-1203/flam-frontend-assignment)
 
-[![React](https://img.shields.io/badge/React-18.3-61dafb.svg?style=flat&logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue.svg?style=flat&logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF.svg?style=flat&logo=vite)](https://vitejs.dev/)
-[![Express](https://img.shields.io/badge/Express-4.21-000000.svg?style=flat&logo=express)](https://expressjs.com/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
-
----
-
-## Table of Contents
-1. [Core Philosophy (Why It's Not a Chatbot)](#core-philosophy)
-2. [Quick Start & Setup](#quick-start--setup)
-3. [Architecture & Project Structure](#architecture--project-structure)
-4. [Structured JSON Schema](#structured-json-schema)
-5. [Defensive Parsing & Failure Mode Handling](#defensive-parsing--failure-mode-handling)
-6. [Interactive Features & Stretch Goals](#interactive-features--stretch-goals)
-7. [AI Usage Note](#ai-usage-note)
-8. [Known Limitations & Future Roadmap](#known-limitations--future-roadmap)
-9. [Time Spent Breakdown](#time-spent-breakdown)
+[![Live Frontend](https://img.shields.io/badge/Frontend-Vercel_Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://flam-frontend-assignment.vercel.app)
+[![Live Backend](https://img.shields.io/badge/Backend_API-Render_Service-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://flam-frontend-assignment-yfwt.onrender.com)
+[![React](https://img.shields.io/badge/React-18.3-61dafb?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-3.8_Flash-8E75FF?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
 
 ---
 
-## 1. Core Philosophy
+## 🔗 Live Access & Deployment Links
 
-The primary objective is to demonstrate how to convert **unpredictable AI outputs into a robust, high-polish, interactive UI** rather than a standard conversational chat box.
-
-- **Strict Structured Outputs**: The LLM is constrained to return a well-defined JSON schema representing a `StudySet` containing flashcards, quiz questions with distractor explanations, and foundational concepts.
-- **Defensive Boundary**: Raw model responses never touch React state directly. They pass through a dedicated validation and sanitization layer (`validateResult.ts`).
-- **Secure Backend Proxy**: Frontend calls an internal Node/Express proxy (`/api/generate`), keeping all API keys securely off the client bundle.
-- **Offline Intelligent Demo Mode**: If no Gemini API key is configured in `.env`, the application automatically falls back to an internal structured generator so the entire interactive UI can be evaluated immediately with zero setup friction.
+| Resource | Service / Platform | Direct URL | Status |
+| :--- | :--- | :--- | :--- |
+| **Frontend Application** | Vercel | [https://flam-frontend-assignment.vercel.app](https://flam-frontend-assignment.vercel.app) | 🟢 Live / Deployed |
+| **Backend API Proxy** | Render | [https://flam-frontend-assignment-yfwt.onrender.com](https://flam-frontend-assignment-yfwt.onrender.com) | 🟢 Online / Active |
+| **Health Check Endpoint** | Render Web Service | [https://flam-frontend-assignment-yfwt.onrender.com/api/health](https://flam-frontend-assignment-yfwt.onrender.com/api/health) | 🟢 200 OK |
+| **Source Repository** | GitHub | [https://github.com/DharshiniManikandan-1203/flam-frontend-assignment](https://github.com/DharshiniManikandan-1203/flam-frontend-assignment) | 🟢 Public |
 
 ---
 
-## 2. Quick Start & Setup
+## 📌 Executive Overview
 
-### Prerequisites
-- Node.js 18.x or higher
-- npm 9.x or higher
+**MindForge AI** is an intelligent, structured educational study tool designed to transform unstructured notes, articles, and curriculum topics into active-recall learning suites. 
 
-### Installation & Launch
+Rather than standard conversational chat interfaces, MindForge AI focuses on **deterministic structured JSON extraction** to drive interactive UI components:
 
-```bash
-# 1. Clone repository
-git clone https://github.com/DharshiniManikandan-1203/flam-frontend-assignment.git
-cd flam-frontend-assignment
+1. **3D Active-Recall Flashcard Deck**: Interactive flip cards with session mastery tracking, keyboard shortcuts, shuffling, and status filters.
+2. **Self-Grading Quiz Engine with Re-Test Loop**: 4-option multiple-choice quizzes featuring randomized answer distribution, instant answer rationales, score streaks, letter grading, and an exclusive **"Re-Test Wrong Answers"** mode.
+3. **Key Concept Taxonomy**: High-yield terminology cards categorized by importance level with instant clipboard integration.
+4. **Follow-Up Refinement Engine**: Live conversational refinement loop allowing students to dynamically expand or adjust generated study sets without losing context.
+5. **Session Management & Export**: Local persistence with full study set export in **JSON** and formatted **Markdown (.md)** study guides.
 
-# 2. Install dependencies
-npm install
+---
 
+## 🏛️ Architectural Highlights
 
-# 3. Start both Backend Server and Vite Dev Server concurrently
-npm start
-# or: npm run dev
+```
+┌─────────────────────────────────────────────────────────────┐
+│                       Client (Vite / React 18)              │
+│  - Tabbed Dashboard (Flashcards / Quiz / Concepts)          │
+│  - Defensive Runtime Validator (validateResult.ts)          │
+│  - Stale Response Guard (useRef Sequence ID)                │
+│  - AbortController Timeout Management                       │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ HTTPS / JSON
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│               Backend Proxy (Express / Node.js)             │
+│  - Secure API Key Isolation (Never exposed to client)       │
+│  - Dynamic Model Cascade (Gemini 3.8 / 3.6 / 3.7 Flash)     │
+│  - JSON Schema Enforcement & Output Sanitization            │
+│  - Automated 429 Rate-Limit Interception                    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Google Generative AI SDK
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    Google Gemini AI Cloud                   │
+│  - Strict JSON Mode (responseMimeType: application/json)   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-The application will be accessible at:
-- **Frontend**: [http://localhost:5173](http://localhost:5173)
-- **Backend Proxy**: [http://localhost:3001](http://localhost:3001)
+### 1. Zero API Key Exposure
+All LLM orchestration happens on the dedicated Express backend proxy (`server/generate.ts`). Client bundles never contain sensitive API keys or credentials.
 
-### 🌐 Deployment Guide (Render + Vercel)
+### 2. Strict Defensive Validation Boundary
+LLM outputs are sanitized and validated through a runtime schema validator before reaching React state. Missing attributes, malformed questions, or invalid option lengths are safely normalized without UI crashes.
 
-#### 1. Deploy Backend to Render (Web Service)
-1. Go to [Render Dashboard](https://dashboard.render.com/) -> **New** -> **Web Service**.
-2. Connect this GitHub repository.
-3. Configure the service:
-   - **Build Command**: `npm install`
-   - **Start Command**: `npm run start:server`
-   - **Environment Variable**: `GEMINI_API_KEY` = your Gemini key.
-4. Once deployed, copy your Render backend URL (e.g. `https://your-backend.onrender.com`).
+### 3. Asynchronous Stale Response Guard
+An incremental sequence identifier (`useRef(0)`) tags each request. If a user triggers a new generation while a previous request is in-flight, slower stale responses are safely discarded upon resolution.
 
-#### 2. Deploy Frontend to Vercel
-1. Go to [Vercel Dashboard](https://vercel.com/) -> **Add New** -> **Project**.
-2. Import this GitHub repository.
-3. Set Environment Variable in Vercel settings:
-   - `VITE_API_BASE_URL` = `https://your-backend.onrender.com`
-4. Click **Deploy**. Vercel will build and host the interactive frontend!
+### 4. Automated Answer Randomization
+Quiz questions undergo algorithmic option shuffling (Fisher-Yates) during ingestion, ensuring correct answers are evenly distributed across all choices (`A`, `B`, `C`, `D`).
 
 ---
 
-## 3. Architecture & Project Structure
+## 🚀 Quick Start & Local Development
+
+### Prerequisites
+- **Node.js**: v18.x or higher
+- **npm**: v9.x or higher
+- **Gemini API Key**: Obtainable from [Google AI Studio](https://aistudio.google.com/)
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/DharshiniManikandan-1203/flam-frontend-assignment.git
+cd flam-frontend-assignment
+npm install
+```
+
+### 2. Configure Environment
+
+Create a `.env` file in the project root:
+
+```env
+PORT=3001
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### 3. Launch Development Server
+
+```bash
+npm start
+```
+
+This concurrently starts:
+- **Frontend (Vite)**: [http://localhost:5173](http://localhost:5173)
+- **Backend Proxy (Express)**: [http://localhost:3001](http://localhost:3001)
+
+---
+
+## 📂 Project Structure
 
 ```
 flam-frontend-assignment/
 ├── server/
-│   └── generate.ts          # Express proxy: holds API key, invokes Gemini, enforces JSON schema
+│   └── generate.ts            # Express proxy: holds Gemini API key, handles /api/generate & /api/refine
 ├── src/
 │   ├── components/
-│   │   ├── Header.tsx        # App bar with provider status, saved decks drawer, shortcuts trigger
-│   │   ├── PromptInput.tsx   # Free-form text input with presets and difficulty controls
-│   │   ├── ResultView.tsx    # Tabbed dashboard routing parsed data to interactive modules
-│   │   ├── FlashcardDeck.tsx # 3D flipping cards with mastery tracking, filtering, and shuffle
-│   │   ├── QuizView.tsx      # Interactive quiz with instant feedback, streak, and re-test loop
-│   │   ├── KeyConceptsView.tsx # Structured concept cards with importance tags and clipboard copy
-│   │   ├── RefinementInput.tsx # Follow-up prompt loop to adjust or expand the active deck
-│   │   ├── SessionHistory.tsx # LocalStorage session manager with JSON/Markdown export
-│   │   ├── ShortcutsModal.tsx # Keyboard navigation guide (? trigger)
-│   │   ├── LoadingState.tsx  # Multi-stage pipeline progress indicator with cancel action
-│   │   └── ErrorState.tsx    # Granular error state with debug inspector and retry actions
+│   │   ├── Header.tsx          # Brand header, live Gemini status indicator, and saved session access
+│   │   ├── PromptInput.tsx     # Topic input, preset curriculum topics, and difficulty controls
+│   │   ├── ResultView.tsx      # Core tabbed interface for Flashcards, Quiz, Concepts, and Meta
+│   │   ├── FlashcardDeck.tsx   # 3D CSS flip cards, mastery rating (Know It / Still Learning), shortcuts
+│   │   ├── QuizView.tsx        # Interactive quiz, rationale expanders, confetti, and Re-Test loop
+│   │   ├── KeyConceptsView.tsx # High-yield concept cards with importance badges and clipboard copy
+│   │   ├── RefinementInput.tsx # Follow-up prompt loop for iterative study set updates
+│   │   ├── SessionHistory.tsx  # LocalStorage persistence with JSON and Markdown export
+│   │   ├── ShortcutsModal.tsx  # Keyboard shortcuts modal dialog (? key)
+│   │   ├── LoadingState.tsx    # Multi-stage animated pipeline with cancel action
+│   │   └── ErrorState.tsx      # Granular error state with debug inspector and retry action
 │   ├── lib/
-│   │   ├── api.ts            # Frontend API client with AbortController and timeout guards
-│   │   └── validateResult.ts # Defensive shape validation and schema sanitization
+│   │   ├── api.ts              # API client with AbortController and timeout guards
+│   │   └── validateResult.ts   # Defensive validation, sanitization, and quiz option randomization
 │   ├── types/
-│   │   └── result.ts         # TypeScript interfaces for StudySet, Cards, Quiz, and Errors
-│   ├── App.tsx               # Root component: state orchestration and stale response guard
-│   ├── main.tsx              # React DOM entry point
-│   └── index.css             # Tailwind styling and 3D card perspective classes
-├── .env                      # Environment variables 
-├── package.json              # Project scripts and dependencies
-├── tailwind.config.js        # Theme tokens, fonts, and animation keyframes
-└── tsconfig.json             # TypeScript configuration
+│   │   └── result.ts           # TypeScript type definitions for StudySet, Cards, Quiz, and Errors
+│   ├── App.tsx                 # Root component: state management and stale response guard
+│   ├── main.tsx                # React application entry point
+│   └── index.css               # Tailwind directives and custom 3D card CSS transformations
+├── .env.example                # Example environment configuration template
+├── package.json                # Project dependencies and operational scripts
+├── tailwind.config.js          # Tailwind design tokens, typography, and animation configurations
+├── tsconfig.json               # TypeScript configuration
+└── vercel.json                 # Vercel deployment routing configuration
 ```
 
 ---
 
-## 4. Structured JSON Schema
+## 📋 Data Contract & Schema Specification
 
-The AI is strictly prompted to return a single JSON object conforming to the following TypeScript model:
+The backend proxy enforces a strict JSON contract with Google Gemini AI:
 
 ```typescript
 export interface StudySet {
@@ -144,7 +179,7 @@ export interface StudySet {
     id: string;
     question: string;
     options: string[]; // exactly 4 choices
-    correctIndex: number; // 0 to 3
+    correctIndex: number; // 0 to 3 (randomized)
     explanation: string;
     conceptTag?: string;
   }>;
@@ -153,92 +188,51 @@ export interface StudySet {
 
 ---
 
-## 5. Defensive Parsing & Failure Mode Handling
+## 🛡️ Error Handling & Defensive Resilience
 
-Most real-world AI features fail because developers assume the model will always return valid JSON in the exact expected structure. MindForge AI implements layered defensive guards:
-
-| Failure Scenario | How MindForge AI Handles It |
-| :--- | :--- |
-| **Malformed JSON** | `JSON.parse` is wrapped in `try/catch`. On failure, the UI renders `ErrorState` with the `MALFORMED_JSON` badge, offers a 1-click retry, and provides an optional raw payload viewer for debugging. |
-| **Missing Fields / Invalid Schema** | `validateStudySet()` validates every field, normalizes missing IDs, filters malformed questions (e.g. fewer than 2 options), and bounds `correctIndex` to valid ranges. If critical collections (`cards`) are absent, routes to `INVALID_SCHEMA` error state. |
-| **Empty / 0-byte Output** | Caught on both backend and frontend as `EMPTY_RESPONSE` before attempting to parse. |
-| **Slow / Hanging Responses** | Enforced 35-second client timeout via `AbortController` and `fetchWithTimeout`. Shows multi-stage animated loading screen with a manual "Cancel" button. |
-| **Network / Server Outage** | Displays a clear `NETWORK_ERROR` banner with instructions to ensure the backend proxy is running on port 3001. |
-| **Rate Limits (HTTP 429)** | Catches quota errors cleanly, displaying a cooldown suggestion and a button to switch to the offline verified sample engine. |
-| **Stale Response Race Condition** | Protects against asynchronous race conditions using an incrementing `useRef(0)` sequence ID. If a user submits a second query while a first is still in flight, the slower first response is safely discarded upon resolution. |
-
-```typescript
-// Stale Response Guard Implementation (src/App.tsx)
-const requestId = useRef(0);
-
-const handleGenerate = async (input: string) => {
-  const currentReqId = ++requestId.current;
-  const result = await generateStudySet(input);
-  
-  // Ignore if a newer request was dispatched in the meantime
-  if (currentReqId !== requestId.current) return;
-  
-  setStudySet(result.studySet);
-};
-```
-
----
-
-## 6. Interactive Features & Stretch Goals
-
-### 1. 3D Active-Recall Flashcards
-- **Realistic 3D Flip**: Click or press `Space` to flip between question and answer with smooth CSS 3D perspective transforms.
-- **Recall Mastery**: Rate recall as *Know It* (Green) or *Still Learning* (Amber) with instant keyboard hotkeys (`1` and `2`).
-- **Deck Controls**: Shuffle deck order, bookmark/star cards (`S`), and filter cards by mastery status.
-- **Keyboard Navigation**: `←` / `→` or `H` / `L` to step through the deck.
-
-### 2. Interactive Self-Grading Quiz & Re-Test Loop
-- **Instant Feedback**: Selecting an option highlights correct (Emerald) and incorrect (Rose) answers immediately.
-- **Detailed Rationale**: Expands explanation for each option.
-- **Streak & Grade Tracker**: Tracks consecutive correct answers and computes final letter grade (`A+` to `D`) with celebratory confetti.
-- **Targeted Re-Test Loop**: "Re-Test Wrong Answers" mode extracts only the questions you missed into a focused re-take session.
-
-### 3. Refinement Loop (Stretch Goal #3)
-- Users can provide follow-up instructions (e.g. *"Add 3 advanced cards on edge cases"*, *"Simplify definitions"*) to iteratively expand the deck without starting from scratch.
-
-### 4. Session Persistence & Export (Stretch Goal #4)
-- Decks are saved to `localStorage` with mastery statistics.
-- Export full study sets to structured **JSON** or formatted **Markdown (MD)** study guides with one click.
-
----
-
-## 7. AI Usage Note
-
-In accordance with the assignment guidelines:
-- **AI Tooling Used**: Generative AI assistants were utilized for initial prompt drafting, schema structuring, and rapid syntax lookup.
-- **Original Code & Architecture**: All component architectures, state workflows, 3D flip card CSS, defensive validation logic, stale response guards, and error state transitions were designed and implemented specifically for this project.
-
----
-
-## 8. Known Limitations & Future Roadmap
-
-1. **Spaced Repetition Algorithm**: Current mastery tracks session-based status (*Know It* vs *Still Learning*). A full SuperMemo (SM-2) algorithm calculating next review intervals (1 day, 3 days, 7 days) would be a natural next step.
-2. **Multi-Modal Diagrams**: Adding AI-generated Mermaid diagram support for complex workflows or architecture notes.
-3. **Audio Pronunciation**: Integrating Web Speech API for auditory flashcard prompts.
-
----
-
-## 9. Time Spent Breakdown
-
-| Phase | Activity | Time Spent |
+| Failure Mode | Defensive Strategy | UI Behavior |
 | :--- | :--- | :--- |
-| **Phase 1** | Requirements analysis, structured JSON schema design, and domain modeling | ~45 mins |
-| **Phase 2** | Project scaffolding (Vite, React 18, TypeScript, TailwindCSS) & backend Express proxy | ~1 hr 15 mins |
-| **Phase 3** | Defensive validator (`validateResult.ts`), API client, timeout & stale response guards | ~1 hr 30 mins |
-| **Phase 4** | 3D Flashcard Deck with mastery tracking, filtering, keyboard shortcuts, and shuffle | ~1 hr 45 mins |
-| **Phase 5** | Interactive Quiz component with instant explanations, streak counter, and **Re-Test loop** | ~1 hr 15 mins |
-| **Phase 6** | Granular error states, loading pipelines, session persistence (LocalStorage), and polish | ~1 hr 00 mins |
-| **Phase 7** | Testing failure scenarios, responsive mobile checks, documentation, and demo verification | ~45 mins |
-| **Total** | **End-to-End Build & Validation** | **~7 hours 45 mins** |
+| **Malformed JSON** | Backend cleaning layer + client `try/catch` guard | Renders `MALFORMED_JSON` error state with raw payload inspector and 1-click retry. |
+| **Schema Mismatch** | `validateStudySet()` defensive type and bounds checking | Automatically repairs minor anomalies; halts corrupted schemas with clean diagnostic messaging. |
+| **Upstream Timeout** | 35-second client timeout enforced via `AbortController` | Displays `TIMEOUT` notification with manual abort and retry controls. |
+| **Quota / Rate Limits (429)** | Automated rate-limit interception across fallback models | Displays `RATE_LIMITED` badge with retry cooldown recommendation. |
+| **Stale Async Race Condition** | `useRef(0)` incrementing sequence IDs | Safely drops slower out-of-order responses when subsequent generations are requested. |
 
 ---
 
-## License & Author
+## ⌨️ Keyboard Shortcuts
 
-Created by **Dharshini Manikandan** for the **Flam Frontend Internship Assignment**.
-Licensed under the [MIT License](LICENSE).
+| Key | Action | Scope |
+| :--- | :--- | :--- |
+| `Space` / `Enter` | Flip active flashcard | Flashcards Tab |
+| `←` / `→` or `H` / `L` | Previous / Next flashcard | Flashcards Tab |
+| `1` | Mark as "Still Learning" | Flashcards Tab |
+| `2` | Mark as "Know It" | Flashcards Tab |
+| `S` | Toggle star / bookmark on active card | Flashcards Tab |
+| `?` | Open Keyboard Shortcuts Modal | Global |
+
+---
+
+## 🌐 Production Deployment
+
+### Backend (Render Web Service)
+- **Repository**: Connected to GitHub repository (`main` branch)
+- **Build Command**: `npm install`
+- **Start Command**: `npm run start:server`
+- **Environment Variables**: `GEMINI_API_KEY` configured in Render Environment Settings
+
+### Frontend (Vercel)
+- **Framework Preset**: Vite
+- **Root Directory**: `./`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**: `VITE_API_BASE_URL` set to Render backend service URL
+
+---
+
+## 👤 Author & Acknowledgements
+
+- **Author**: Dharshini Manikandan
+- **Role**: Frontend Engineering Intern Candidate
+- **Assignment**: Flam Frontend Internship Assignment — *AI-Powered Interactive Tool*
+- **License**: MIT License
