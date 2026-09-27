@@ -80,6 +80,24 @@ function cleanJsonOutput(raw: string): string {
   return cleaned.trim();
 }
 
+// Root welcome endpoint
+app.get('/', (_req: Request, res: Response) => {
+  const geminiKey = process.env.GEMINI_API_KEY;
+  const hasGeminiKey = Boolean(geminiKey && geminiKey !== 'your_gemini_api_key_here' && geminiKey.trim().length > 10);
+
+  res.json({
+    name: 'MindForge AI — Backend Proxy API',
+    status: 'online',
+    llmConfigured: hasGeminiKey,
+    model: 'Google Gemini 3.6 Flash',
+    endpoints: {
+      health: '/api/health',
+      generate: 'POST /api/generate',
+      refine: 'POST /api/refine'
+    }
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (_req: Request, res: Response) => {
   const geminiKey = process.env.GEMINI_API_KEY;
