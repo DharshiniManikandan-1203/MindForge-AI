@@ -3,7 +3,7 @@
 > **Flam Frontend Internship Assignment**  
 > **Author**: Dharshini Manikandan  
 > **GitHub**: [@DharshiniManikandan-1203](https://github.com/DharshiniManikandan-1203)  
-> **Repository**: [flam-frontend-assignment](https://github.com/DharshiniManikandan-1203/flam-frontend-assignment)
+> **Repository**: [MindForge-AI](https://github.com/DharshiniManikandan-1203/MindForge-AI)
 
 [![Live Frontend](https://img.shields.io/badge/Frontend-Vercel_Deployment-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://flam-frontend-assignment-two.vercel.app)
 [![Live Backend](https://img.shields.io/badge/Backend_API-Render_Service-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://flam-frontend-assignment-yfwt.onrender.com)
